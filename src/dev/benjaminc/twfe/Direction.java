@@ -1,7 +1,7 @@
 package dev.benjaminc.twfe;
 
 public enum Direction {
-    UP(0, 1), DOWN(0, -1), LEFT(-1, 0), RIGHT(1, 0);
+    UP(-1, 0), DOWN(1, 0), LEFT(0, -1), RIGHT(0, 1);
 
     int ad, bc;
 
@@ -27,8 +27,8 @@ public enum Direction {
     }
 
     public Position convertMovement(int r, int c, int w, int h) {
-        int nr = (r * ad) + (c * bc);
-        int nc = (c * ad) + (r * bc);
+        int nr = (r * ad) + (c * bc) + ((ad < 0) ? -1 : 0);
+        int nc = (c * ad) + (r * bc) + ((bc < 0) ? -1 : 0);
         while(nc < 0) {
             nc += w;
         }

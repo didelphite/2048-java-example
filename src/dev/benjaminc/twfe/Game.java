@@ -1,6 +1,5 @@
 package dev.benjaminc.twfe;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -13,9 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
@@ -32,7 +28,7 @@ public class Game {
     private NumberLabel boxes[][];
     private int boxSize = 256;
     private double twoChance = 0.75;
-    private int debugAnimSpeed = 000;
+    private int debugAnimSpeed = 1/60;
     private Object gosyncro = new Object();
     private Object kpsyncro = new Object();
     private Direction move;
@@ -207,12 +203,13 @@ public class Game {
                 for(int st = sr-1; st >= 0; st--) {
                     boolean slid = false;
                     // Apply rotation
-                    int r = dir.convertMovement(sr, sc, width, height).getR() % height;
-                    int c = dir.convertMovement(sr, sc, width, height).getC() % width;
-                    int t = dir.convertMovement(st, sc, width, height).getR() % height;
+                    int r = dir.convertMovement(sr, sc, width, height).getR();
+                    int c = dir.convertMovement(sr, sc, width, height).getC();
+                    int tr = dir.convertMovement(st, sc, width, height).getR();
+                    int tc = dir.convertMovement(st, sc, width, height).getC();
                     if(debugAnimSpeed > 0) {
                         boxes[r][c].setMarkerColor(Color.MAGENTA);
-                        boxes[t][c].setMarkerColor(Color.BLUE);
+                        boxes[tr][tc].setMarkerColor(Color.BLUE);
                         repaintAll();
                         regenBoxes();
                     }
@@ -223,41 +220,41 @@ public class Game {
                         e.printStackTrace();
                     }
                     if(numbers[r][c] > 0) {
-                        if(numbers[t][c] == numbers[r][c]) {
+                        if(numbers[tr][tc] == numbers[r][c]) {
                             // Merge numbers
                             numbers[r][c]++;
-                            numbers[t][c] = 0;
+                            numbers[tr][tc] = 0;
                             boxes[r][c].setMarkerColor(Color.GREEN);
                             System.out.println("Merged");
                             if(debugAnimSpeed > 0) {
                                 boxes[r][c].setMarkerColor(null);
-                                boxes[t][c].setMarkerColor(null);
+                                boxes[tr][tc].setMarkerColor(null);
                                 repaintAll();
                                 regenBoxes();
                             }
                             break;
-                        } else if(numbers[t][c] > 0) {
-                            System.out.println(numbers[t][c] + "?" + numbers[r][c]);
+                        } else if(numbers[tr][tc] > 0) {
+                            System.out.println(numbers[tr][tc] + "?" + numbers[r][c]);
                             if(debugAnimSpeed > 0) {
                                 boxes[r][c].setMarkerColor(null);
-                                boxes[t][c].setMarkerColor(null);
+                                boxes[tr][tc].setMarkerColor(null);
                                 repaintAll();
                                 regenBoxes();
                             }
                             break;
                         }
                     } else {
-                        if(numbers[t][c] > 0) {
+                        if(numbers[tr][tc] > 0) {
                             // Shift numbers
-                            numbers[r][c] = numbers[t][c];
-                            numbers[t][c] = 0;
+                            numbers[r][c] = numbers[tr][tc];
+                            numbers[tr][tc] = 0;
                             boxes[r][c].setMarkerColor(Color.LIGHT_GRAY);
                             slid = true;
                         }
                     }
                     if(debugAnimSpeed > 0) {
                         boxes[r][c].setMarkerColor(null);
-                        boxes[t][c].setMarkerColor(null);
+                        boxes[tr][tc].setMarkerColor(null);
                         repaintAll();
                         regenBoxes();
                     }

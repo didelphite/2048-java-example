@@ -19,6 +19,9 @@ public class NumberLabel extends JLabel {
 
     public void setMarkerColor(Color c) {
         markerColor = c;
+        if(getGraphics() != null) {
+            this.paint(getGraphics());
+        }
     }
 
     public void setNum(int num) {
